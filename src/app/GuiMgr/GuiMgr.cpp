@@ -411,9 +411,9 @@ QState GuiMgr::Started(GuiMgr * const me, QEvt const * const e) {
             return Q_HANDLED();
         }
         case Q_INIT_SIG: {
-            //return Q_TRAN(&GuiMgr::Ticker);
+            return Q_TRAN(&GuiMgr::Ticker);
             //return Q_TRAN(&GuiMgr::Signage);
-            return Q_TRAN(&GuiMgr::Bmp);
+            //return Q_TRAN(&GuiMgr::Bmp);
             //return Q_TRAN(&GuiMgr::ColorTest);
         }
         case BG_WND_TIMER: {
