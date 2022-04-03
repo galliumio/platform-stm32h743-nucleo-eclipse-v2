@@ -507,7 +507,7 @@ QState Wifi8266Tx::TxDataRspWait(Wifi8266Tx * const me, QEvt const * const e) {
                 me->Raise(new Evt(DONE));
                 if (me->m_dataOutFifo->GetUsedCount()) {
                     LOG("m_dataOutFifo non-empty, raise SEND_DATA");
-                    me->Raise(new Evt(SEND_DATA));
+                    me->Send(new Wifi8266TxDataReq(), WIFI8266_TX);
                 } else {
                     LOG("m_dataOutFifo empty, ^Wifi8266TxEmptyInd");
                     me->Send(new Wifi8266TxEmptyInd(), WIFI8266);

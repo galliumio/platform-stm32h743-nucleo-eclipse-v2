@@ -179,7 +179,7 @@ int main(void) {
     Log::Off(LED_FRAME);
     Log::Off(GUI_MGR);
     Log::Off(NODE_PARSER);
-    //Log::Off(WIFI8266_TX);
+    Log::Off(WIFI8266_TX);
     Log::Off(WIFI8266_RX);
     Log::Off(WIFI8266);
 
