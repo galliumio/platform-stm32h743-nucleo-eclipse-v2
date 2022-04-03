@@ -54,7 +54,7 @@
 
 FW_DEFINE_THIS_FILE("System.cpp")
 
-#define SRV_DOMAIN      "192.168.1.114"		// "192.168.1.81"		//"192.168.1.233"
+#define SRV_DOMAIN      "192.168.1.81"		// "192.168.1.114"		//"192.168.1.233"
 #define SRV_PORT        60002
 
 using namespace FW;
@@ -111,6 +111,7 @@ QState System::Root(System * const me, QEvt const * const e) {
             me->SendCfm(new SystemStartCfm(ERROR_STATE, me->GetHsmn()), req);
             return Q_HANDLED();
         }
+        case SYSTEM_RESTART_REQ:
         case SYSTEM_STOP_REQ: {
             EVENT(e);
             me->Defer(e);
@@ -136,6 +137,7 @@ QState System::Stopped(System * const me, QEvt const * const e) {
             me->SendCfm(new SystemStopCfm(ERROR_SUCCESS), req);
             return Q_HANDLED();
         }
+        case SYSTEM_RESTART_REQ:
         case SYSTEM_START_REQ: {
             EVENT(e);
             Evt const &req = EVT_CAST(*e);
@@ -307,6 +309,7 @@ QState System::Stopping(System * const me, QEvt const * const e) {
         case Q_INIT_SIG: {
             return Q_TRAN(&System::Stopping1);
         }
+        case SYSTEM_RESTART_REQ:
         case SYSTEM_STOP_REQ: {
             EVENT(e);
             me->Defer(e);

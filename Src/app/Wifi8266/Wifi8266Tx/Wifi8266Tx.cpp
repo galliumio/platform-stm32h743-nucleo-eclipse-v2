@@ -261,10 +261,21 @@ QState Wifi8266Tx::Busy(Wifi8266Tx * const me, QEvt const * const e) {
         }
         case Q_EXIT_SIG: {
             EVENT(e);
+            me->Recall();
             return Q_HANDLED();
         }
         case Q_INIT_SIG: {
             return Q_TRAN(&Wifi8266Tx::TxCmd);
+        }
+        case WIFI8266_TX_DATA_REQ: {
+            EVENT(e);
+            me->Defer(e);
+            return Q_HANDLED();
+        }
+        case WIFI8266_TX_CMD_REQ: {
+            EVENT(e);
+            me->Defer(e);
+            return Q_HANDLED();
         }
         case DONE: {
             EVENT(e);
@@ -493,15 +504,14 @@ QState Wifi8266Tx::TxDataRspWait(Wifi8266Tx * const me, QEvt const * const e) {
             Wifi8266RxRspInd const &ind = static_cast<Wifi8266RxRspInd const &>(*e);
             INFO("rsp = %s", ind.GetRspStr());
             if (me->IsRspSuccess(ind.GetRspStr())) {
-                //me->PostSync(new Evt(DONE, me->GetHsmn()));
+                me->Raise(new Evt(DONE));
                 if (me->m_dataOutFifo->GetUsedCount()) {
-                    LOG("m_dataOutFifo non-empty, raise SEND_DATA");
-                    me->Raise(new Evt(SEND_DATA));
+                    LOG("m_dataOutFifo non-empty, send SEND_DATA");
+                    me->Send(new Wifi8266TxDataReq(), WIFI8266_TX);
                 } else {
-                    LOG("m_dataOutFifo empty, ^Wifi8266TxEmptyInd");
+                    LOG("m_dataOutFifo empty, send Wifi8266TxEmptyInd");
                     me->Send(new Wifi8266TxEmptyInd(), WIFI8266);
                 }
-                me->PostSync(new Evt(DONE, me->GetHsmn()));
             }
             return Q_HANDLED();
         }
